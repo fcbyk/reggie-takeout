@@ -13,6 +13,10 @@ File Encoding         : 65001
 Date: 2021-07-23 10:41:41
 */
 
+drop schema if exists reggie;
+create schema reggie;
+use reggie;
+
 SET FOREIGN_KEY_CHECKS=0;
 
 -- ----------------------------
