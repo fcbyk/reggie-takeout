@@ -1,2 +1,2 @@
-front/** linguist-vendored
-backend/** linguist-vendored
+src/main/resources/front/** linguist-vendored
+src/main/resources/backend/** linguist-vendored
