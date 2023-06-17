@@ -37,8 +37,6 @@ public class CategoryController {
         //进行分页查询
         categoryService.page(pageInfo,queryWrapper);
 
-
-
         return R.success(pageInfo);
     }
 

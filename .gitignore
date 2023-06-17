@@ -2,6 +2,3 @@
 *.iml
 out
 target
-
-backend
-front
