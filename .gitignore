@@ -1,0 +1,8 @@
+.idea
+*.iml
+out
+target
+
+src/main/resources/front
+src/main/resources/backend
+src/main/resources/prototype
