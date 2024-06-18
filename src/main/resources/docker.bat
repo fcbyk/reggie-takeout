@@ -1,0 +1,1 @@
+docker run --name reggie-takeout -e MYSQL_ROOT_PASSWORD=123456 -d -p 3306:3306 mysql:latest

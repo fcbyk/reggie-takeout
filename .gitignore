@@ -2,6 +2,7 @@
 *.iml
 out
 target
+docs
 
 src/main/resources/front
 src/main/resources/backend
