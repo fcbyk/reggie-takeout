@@ -12,7 +12,7 @@ public class ReggieApplication{
     public static void main(String[] args) {
         SpringApplication.run(ReggieApplication.class);
         log.info("http://localhost/backend/index.html");
-        log.info("http://localhost/front/index.html");
+        log.info("http://localhost/front/page/login.html");
     }
 
 }
