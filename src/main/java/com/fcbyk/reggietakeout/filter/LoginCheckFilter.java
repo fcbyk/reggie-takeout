@@ -10,6 +10,7 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import com.fcbyk.reggietakeout.common.BaseContext;
 
 /**
  * 检查用户是否已经完成登录
@@ -52,6 +53,10 @@ public class LoginCheckFilter implements Filter{
         //4、判断登录状态，如果已登录，则直接放行
         if(request.getSession().getAttribute("employee") != null){
             log.info("用户已登录，用户id为：{}",request.getSession().getAttribute("employee"));
+
+            Long empId = (Long) request.getSession().getAttribute("employee");
+            BaseContext.setCurrentId(empId);
+
             filterChain.doFilter(request,response);
             return;
         }
