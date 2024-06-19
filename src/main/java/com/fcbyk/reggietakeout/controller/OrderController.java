@@ -8,9 +8,7 @@ import com.fcbyk.reggietakeout.entity.Orders;
 import com.fcbyk.reggietakeout.service.OrderService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 订单
@@ -43,5 +41,17 @@ public class OrderController {
 
         // 返回结果
         return R.success(pageResult);
+    }
+
+    /**
+     * 用户下单
+     * @param orders
+     * @return
+     */
+    @PostMapping("/submit")
+    public R<String> submit(@RequestBody Orders orders){
+        log.info("订单数据：{}",orders);
+        orderService.submit(orders);
+        return R.success("下单成功");
     }
 }
