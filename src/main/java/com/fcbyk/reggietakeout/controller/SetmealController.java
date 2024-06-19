@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fcbyk.reggietakeout.common.R;
 import com.fcbyk.reggietakeout.entity.Category;
 import com.fcbyk.reggietakeout.entity.Setmeal;
-import com.fcbyk.reggietakeout.entity.SetmealDto;
+import com.fcbyk.reggietakeout.dto.SetmealDto;
 import com.fcbyk.reggietakeout.service.CategoryService;
 import com.fcbyk.reggietakeout.service.SetmealService;
 import lombok.extern.slf4j.Slf4j;

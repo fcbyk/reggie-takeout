@@ -1,6 +1,8 @@
-package com.fcbyk.reggietakeout.entity;
+package com.fcbyk.reggietakeout.dto;
 
 
+import com.fcbyk.reggietakeout.entity.Setmeal;
+import com.fcbyk.reggietakeout.entity.SetmealDish;
 import lombok.Data;
 import java.util.List;
 
