@@ -5,14 +5,13 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fcbyk.reggietakeout.common.R;
 import com.fcbyk.reggietakeout.entity.Employee;
 import com.fcbyk.reggietakeout.service.EmployeeService;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
+
 import javax.servlet.http.HttpServletRequest;
 
-@Slf4j
 @RestController
 @RequestMapping("/employee")
 public class EmployeeController {
