@@ -2,19 +2,25 @@ package com.fcbyk.reggietakeout.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fcbyk.reggietakeout.common.BaseContext;
 import com.fcbyk.reggietakeout.common.CustomException;
+import com.fcbyk.reggietakeout.dto.OrdersDto;
 import com.fcbyk.reggietakeout.entity.*;
 import com.fcbyk.reggietakeout.mapper.OrderMapper;
 import com.fcbyk.reggietakeout.service.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -104,5 +110,107 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
 
         //清空购物车数据
         shoppingCartService.remove(wrapper);
+    }
+
+    public Page<OrdersDto> getUserPage(int page, int pageSize) {
+        // 构造分页对象
+        Page<Orders> ordersPage = new Page<>(page, pageSize);
+        Page<OrdersDto> dtoPage = new Page<>(); // 用于存放转换后的数据
+        // 构造查询条件
+        LambdaQueryWrapper<Orders> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Orders::getUserId, BaseContext.getCurrentId());
+        queryWrapper.orderByDesc(Orders::getOrderTime);
+        // 查询基本订单数据
+        this.page(ordersPage, queryWrapper);
+        // 拷贝对象，将ordersPage中的数据拷贝到dtoPage中，除去records属性,records属性需要单独处理
+        BeanUtils.copyProperties(ordersPage, dtoPage, "records");
+        // records是Page对象的一个属性，用于存放分页查询的结果，因为orderPage的records很多数据比dtoPage的少，需要单独处理
+        List<Orders> ordersPageRecords = ordersPage.getRecords();
+        // 将records中的每个Orders对象转换为OrdersDto对象
+        List<OrdersDto> dtoPageRecords = ordersPageRecords.stream().map(item -> {
+            // 1.先创建OrdersDto对象
+            OrdersDto ordersDto = new OrdersDto();
+            // 2.将Orders对象中的基本数据拷贝到OrdersDto对象中
+            BeanUtils.copyProperties(item, ordersDto);
+            // 3.查询订单商品数据
+            LambdaQueryWrapper<OrderDetail> orderDetailQueryWrapper = new LambdaQueryWrapper<>();
+            orderDetailQueryWrapper.eq(OrderDetail::getOrderId, item.getId());
+            List<OrderDetail> orderDetails = orderDetailService.list(orderDetailQueryWrapper);
+            // 4.将订单商品数据设置到OrdersDto对象中
+            ordersDto.setOrderDetails(orderDetails);
+            // 5.将其它数据设置到OrdersDto对象中
+            LambdaQueryWrapper<User> userQueryWrapper = new LambdaQueryWrapper<>();
+            userQueryWrapper.eq(User::getId, item.getUserId());
+            User user = userService.getOne(userQueryWrapper);
+            if (user != null) {
+                ordersDto.setUserName(user.getName());
+                ordersDto.setPhone(user.getPhone());
+            }
+            ordersDto.setAmount(item.getAmount());
+            ordersDto.setConsignee(item.getConsignee());
+            ordersDto.setAddress(item.getAddress());
+            ordersDto.setUserName(item.getConsignee());
+
+            return ordersDto;
+
+        }).collect(Collectors.toList());
+
+        // 将转换后的数据设置到dtoPage中
+        dtoPage.setRecords(dtoPageRecords);
+
+        return dtoPage;
+    }
+
+    public Page<OrdersDto> getPage(int page,
+                                   int pageSize,
+                                   String number,
+                                   @DateTimeFormat(pattern = "yyyy-mm-dd HH:mm:ss") Date beginTime,
+                                   @DateTimeFormat(pattern = "yyyy-mm-dd HH:mm:ss") Date endTime) {
+        // 构造分页对象
+        Page<Orders> ordersPage = new Page<>(page, pageSize);
+        Page<OrdersDto> dtoPage = new Page<>(); // 用于存放转换后的数据
+        // 构造查询条件
+        LambdaQueryWrapper<Orders> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.orderByDesc(Orders::getOrderTime);
+        queryWrapper.like(StringUtils.isNotEmpty(number), Orders::getNumber, number);
+        queryWrapper.between((beginTime != null && endTime != null), Orders::getOrderTime, beginTime, endTime);
+        // 查询基本订单数据
+        this.page(ordersPage, queryWrapper);
+        // 拷贝对象，将ordersPage中的数据拷贝到dtoPage中，除去records属性,records属性需要单独处理
+        BeanUtils.copyProperties(ordersPage, dtoPage, "records");
+        // records是Page对象的一个属性，用于存放分页查询的结果，因为orderPage的records很多数据比dtoPage的少，需要单独处理
+        List<Orders> ordersPageRecords = ordersPage.getRecords();
+        // 将records中的每个Orders对象转换为OrdersDto对象
+        List<OrdersDto> dtoPageRecords = ordersPageRecords.stream().map(item -> {
+            // 1.先创建OrdersDto对象
+            OrdersDto ordersDto = new OrdersDto();
+            // 2.将Orders对象中的基本数据拷贝到OrdersDto对象中
+            BeanUtils.copyProperties(item, ordersDto);
+            // 3.查询订单商品数据
+            LambdaQueryWrapper<OrderDetail> orderDetailQueryWrapper = new LambdaQueryWrapper<>();
+            orderDetailQueryWrapper.eq(OrderDetail::getOrderId, item.getId());
+            List<OrderDetail> orderDetails = orderDetailService.list(orderDetailQueryWrapper);
+            // 4.将订单商品数据设置到OrdersDto对象中
+            ordersDto.setOrderDetails(orderDetails);
+            // 5.将其它数据设置到OrdersDto对象中
+            LambdaQueryWrapper<User> userQueryWrapper = new LambdaQueryWrapper<>();
+            userQueryWrapper.eq(User::getId, item.getUserId());
+            User user = userService.getOne(userQueryWrapper);
+            if (user != null) {
+                ordersDto.setUserName(user.getName());
+                ordersDto.setPhone(user.getPhone());
+            }
+            ordersDto.setAmount(item.getAmount());
+            ordersDto.setConsignee(item.getConsignee());
+            ordersDto.setAddress(item.getAddress());
+            ordersDto.setUserName(item.getConsignee());
+
+            return ordersDto;
+        }).collect(Collectors.toList());
+
+        // 将转换后的数据设置到dtoPage中
+        dtoPage.setRecords(dtoPageRecords);
+
+        return dtoPage;
     }
 }

@@ -11,9 +11,7 @@ import com.fcbyk.reggietakeout.service.SetmealService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,13 +27,6 @@ public class SetmealController {
     @Autowired
     private CategoryService categoryService;
 
-    /**
-     * 套餐分页查询
-     * @param page
-     * @param pageSize
-     * @param name
-     * @return
-     */
     @GetMapping("/page")
     public R<Page> page(int page, int pageSize, String name){
         //分页构造器对象
@@ -74,11 +65,6 @@ public class SetmealController {
         return R.success(dtoPage);
     }
 
-    /**
-     * 根据条件查询套餐数据
-     * @param setmeal
-     * @return
-     */
     @GetMapping("/list")
     public R<List<Setmeal>> list(Setmeal setmeal){
         LambdaQueryWrapper<Setmeal> queryWrapper = new LambdaQueryWrapper<>();
@@ -89,5 +75,41 @@ public class SetmealController {
         List<Setmeal> list = setmealService.list(queryWrapper);
 
         return R.success(list);
+    }
+
+    @GetMapping("/{id}")
+    public R<SetmealDto> get(@PathVariable Long id) {
+        SetmealDto setmealDto = setmealService.getByIdWithDishes(id);
+        return R.success(setmealDto);
+    }
+
+    @GetMapping("/dish/{id}")
+    public R<SetmealDto> dish(@PathVariable Long id) {
+        SetmealDto dishes = setmealService.getByIdWithDishes(id);
+        return R.success(dishes);
+    }
+
+    @PostMapping
+    public R<String> save(@RequestBody SetmealDto setmealDto) {
+        setmealService.saveWithDishes(setmealDto);
+        return R.success("添加套餐成功");
+    }
+
+    @PostMapping("/status/{status}")
+    public R<String> changeStatus(@RequestParam List<Long> ids, @PathVariable Integer status) {
+        setmealService.changeStatus(ids, status);   // 修改状态
+        return R.success("修改套餐状态成功");
+    }
+
+    @PutMapping
+    public R<String> put(@RequestBody SetmealDto setmealDto) {
+        setmealService.updateWithDishes(setmealDto);
+        return R.success("修改套餐成功");
+    }
+
+    @DeleteMapping
+    public R<String> delete(@RequestParam List<Long> ids) {
+        setmealService.removeWithDishes(ids);
+        return R.success("删除套餐成功");
     }
 }
