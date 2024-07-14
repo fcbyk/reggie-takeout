@@ -26,6 +26,12 @@ public class LoginCheckFilter implements Filter{
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
 
+        // 处理CORS预检请求
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            response.setStatus(HttpServletResponse.SC_OK);
+            return;
+        }
+
         //1、获取本次请求的URI
         String requestURI = request.getRequestURI();// /backend/index.html
 
