@@ -4,6 +4,37 @@ out
 target
 docs
 
-src/main/resources/front
-src/main/resources/backend
-src/main/resources/prototype
+server/src/main/resources/front
+server/src/main/resources/backend
+server/src/main/resources/prototype
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+.DS_Store
+dist
+dist-ssr
+coverage
+*.local
+
+browser/cypress/videos/
+browser/cypress/screenshots/
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+*.tsbuildinfo
